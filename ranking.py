@@ -5,12 +5,13 @@ import math
 from collections import Counter
 import os
 from transformers import BertTokenizer, BertModel
+from config import RUTA_DOCUMENTOS, INDICE_INVERTIDO_PATH, MONGO_URI, DB_NAME, COLLECTION_NAME, RUTA_EMBEDDINGS, BERT
 
 # Ruta de los archivos de documentos
-RUTA_DOCUMENTOS = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\decretos_2023_test'
+RUTA_DOCUMENTOS = RUTA_DOCUMENTOS
 
 # Ruta del archivo de embeddings precalculados
-RUTA_EMBEDDINGS = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\embeddings_avanzado_test.npy'
+
 
 if len(sys.argv) < 2:
     print("Error: No se proporcionaron la consulta o la ruta de documentos.")
@@ -25,8 +26,8 @@ def obtener_embeddings(texto, modelo, tokenizador):
     return outputs.last_hidden_state.mean(dim=1).detach().numpy()
 
 # Inicializar BERT
-tokenizador = BertTokenizer.from_pretrained('bert-base-uncased')
-modelo = BertModel.from_pretrained('bert-base-uncased')
+tokenizador = BertTokenizer.from_pretrained(BERT)
+modelo = BertModel.from_pretrained(BERT)
 
 try:
     # Cargar los embeddings precalculados

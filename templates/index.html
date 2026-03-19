@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Documentos</title>
+</head>
+<body>
+    <h1>Buscador de Documentos</h1>
+
+    <h2>Estado del sistema:</h2>
+    <ul>
+        <li>Flask: {{ estado_sistema['flask'] }}</li>
+        <li>MongoDB: {{ estado_sistema['mongodb'] }}</li>
+        <li>BERT: {{ estado_sistema['bert'] }}</li>
+        <li>Crawler: {{ estado_sistema['crawler'] }}</li>
+    </ul>
+
+    <h2>Tiempos de carga:</h2>
+    <ul>
+        <li>MongoDB: {{ tiempos_carga.get('mongodb', 'N/A') }} segundos</li>
+        <li>BERT: {{ tiempos_carga.get('bert', 'N/A') }} segundos</li>
+        <li>Crawler: {{ tiempos_carga.get('crawler', 'N/A') }} segundos</li>
+    </ul>
+
+    <form method="POST" action="/buscar">
+        <label for="query">Consulta:</label>
+        <input type="text" id="query" name="query" size="50">
+        <button type="submit">Buscar</button>
+    </form>
+</body>
+</html>

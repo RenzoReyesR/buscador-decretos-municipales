@@ -1,0 +1,24 @@
+__pycache__/
+.venv/
+*.txt
+*.json
+*.npy
+*.png
+*.pkl
+tests/
+codigos  para probar funciones/
+tests/codigos antiguos respaldo/
+decretos_2023/
+decretos_2023_test/
+decretos_2023_test_100/
+decretos_2023_test_1000/
+respaldo codigos/
+codigo mierda/
+codigos para probar f*/
+ley_zipf.py
+ordenar_palabras.py
+flask_prueba.py
+distil.py
+contador_palabras.py
+contador.py
+words_torta.py

@@ -7,15 +7,16 @@ from transformers import BertTokenizer, BertModel
 import torch
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
+import sys
+from config import RUTA_DOCUMENTOS, INDICE_INVERTIDO_PATH, MONGO_URI, DB_NAME, COLLECTION_NAME, RUTA_EMBEDDINGS, BERT
 
 # RUTA_EMBEDDINGS debería ser cargado una vez al inicio
-RUTA_EMBEDDINGS = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\embeddings_avanzado_test.npy'
 EMBEDDINGS_DICT = np.load(RUTA_EMBEDDINGS, allow_pickle=True).item()
 
 # Configuración de la base de datos MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['indice_invertido_decretos_munvalp_test']
-collection = db['indice_invertido_test']
+client = MongoClient(MONGO_URI)
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
 stop_words = set(stopwords.words('spanish'))
 
@@ -71,9 +72,9 @@ def similitud_coseno(vector1, vector2):
         return 0  # Evitar división por cero
     return producto_punto / (magnitud_vector1 * magnitud_vector2)
 
-# Cargar el modelo BERT y el tokenizador una sola vez
-tokenizador = BertTokenizer.from_pretrained('bert-base-uncased')
-modelo = BertModel.from_pretrained('bert-base-uncased')
+# Cargar el modelo DistilBERT y el tokenizador una sola vez
+tokenizador = BertTokenizer.from_pretrained(BERT)
+modelo = BertModel.from_pretrained(BERT)
 
 def run(query: str):
     """Función principal que procesa la consulta y devuelve los documentos relevantes."""
@@ -135,3 +136,42 @@ def run(query: str):
     except Exception as e:
         print(f"Error: {str(e)}")
         return {"error": str(e)}
+
+def serializable_result(result):
+    """
+    Convierte cualquier estructura no serializable en JSON (como np.ndarray) a un formato compatible.
+    """
+    if isinstance(result, dict):
+        return {k: serializable_result(v) for k, v in result.items()}
+    elif isinstance(result, list):
+        return [serializable_result(v) for v in result]
+    elif isinstance(result, np.ndarray):  # Convertir ndarray a lista o número
+        return result.item() if result.size == 1 else result.tolist()
+    elif isinstance(result, float):  # Asegurar conversión de floats
+        return float(result)
+    return result
+def depurar_estructura(estructura):
+    """
+    Recorre la estructura de datos y registra los tipos de cada campo.
+    """
+    if isinstance(estructura, dict):
+        return {k: type(v).__name__ for k, v in estructura.items()}
+    elif isinstance(estructura, list):
+        return [depurar_estructura(v) for v in estructura]
+    else:
+        return type(estructura).__name__
+
+if __name__ == "__main__":
+    query = "sala y aforos"
+    resultados = run(query)  # Ejecutar la consulta
+    
+    # Registrar tipos de datos presentes en los resultados
+    print("Estructura y tipos de los resultados:")
+    print(json.dumps(depurar_estructura(resultados), indent=4, ensure_ascii=False))
+
+    try:
+        # Convertir resultados a un formato serializable
+        resultados_serializables = serializable_result(resultados)
+        print(json.dumps(resultados_serializables, indent=4, ensure_ascii=False))
+    except Exception as e:
+        print(f"[ERROR] No se pudo serializar la estructura: {e}")

@@ -4,11 +4,12 @@ from threading import Thread, Lock
 from concurrent.futures import ThreadPoolExecutor
 from actualizar_indice_invertido import actualizar_indice_invertido
 from actualizar_embeddings import actualizar_embeddings
+from config import RUTA_DOCUMENTOS, INDICE_INVERTIDO_PATH, MONGO_URI, DB_NAME, COLLECTION_NAME, RUTA_EMBEDDINGS, BERT
 
 # Configuraciones y rutas
-RUTA_DOCUMENTOS = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\decretos_2023_test'
-OUTPUT_PATH = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\indice_invertido_con_stopwords_normalizados_avanzado_test.json'
-EMBEDDINGS_PATH = r'C:\Users\56974\Desktop\seminario 2024\codigos python avanzados\embeddings_avanzado.npy'
+
+OUTPUT_PATH = INDICE_INVERTIDO_PATH
+EMBEDDINGS_PATH = RUTA_EMBEDDINGS
 CHECK_INTERVAL = 120  # Intervalo de verificación en segundos
 ARCHIVO_PROCESADOS = 'archivos_procesados.txt'
 lock = Lock()
